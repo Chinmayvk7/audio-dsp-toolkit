@@ -198,6 +198,18 @@ y[n] = 1.8744·cos(ω)·y[n-1] - 0.8783·y[n-2] + x[n] - 2·cos(ω)·x[n-1] + x[
 
 **Visualization**:
 
+
+###  Audio Classification  
+*(src/classification/MusicClass.py)*
+
+![Audio classification results](results/plots/Audioclassification.png)
+
+This visualization shows spectrogram-based comparisons between a query audio
+sample and reference tracks in the library. Dominant-frequency spectral
+fingerprints are extracted from Fourier transforms and
+compared using a similarity metric, where higher similarity indicates a
+closer match to the query signal.
+
 ### Blind Source Separation (ICA)
 *(src/source_separation/SourceSeparation.py)*
 
@@ -210,16 +222,6 @@ signals, while the bottom row shows the corresponding unmixed source estimates.
 Centering, whitening, and iterative maximization of non-Gaussianity are used to
 separate statistically independent audio components.
 
-###  Audio Classification  
-*(src/classification/MusicClass.py)*
-
-![Audio classification results](results/plots/Audioclassification.png)
-
-This visualization shows spectrogram-based comparisons between a query audio
-sample and reference tracks in the library. Dominant-frequency spectral
-fingerprints are extracted from Fourier transforms and
-compared using a similarity metric, where higher similarity indicates a
-closer match to the query signal.
 
 ### Shelving Filter (IIR)
 *(src/filters/ShelvingFilter.py)*

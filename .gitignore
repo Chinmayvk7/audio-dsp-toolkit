@@ -1,0 +1,31 @@
+############################
+# Audio DSP Toolkit Ignore #
+############################
+
+# Ignore all audio files by default
+*.wav
+*.mp3
+*.flac
+*.ogg
+
+# Allow small demo/test audio
+!data/test_audio/**/*.wav
+
+# Generated outputs
+output/
+results/**/*.wav
+
+# Plot source formats
+*.eps
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS junk
+.DS_Store
+Thumbs.db
