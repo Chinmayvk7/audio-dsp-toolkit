@@ -182,18 +182,17 @@ y[n] = 1.8744·cos(ω)·y[n-1] - 0.8783·y[n-2] + x[n] - 2·cos(ω)·x[n-1] + x[
 
 **Implementation**: Custom iterative Cooley-Tukey FFT (radix-2)
 
-## 📊 Results
+## Results
 
-### Source Separation Performance
+## Source Separation Performance
 
-+--------------------+----------------------+
-| Metric             | Value                |
-+--------------------+----------------------+
-| Input SNR          | -3 dB (heavily mixed)|
-| Output SNR         | 12 dB                |
-| Source Correlation | 0.85 ± 0.03          |
-| Convergence Time   | < 1 second           |
-+--------------------+----------------------+
+| Metric | Value |
+|--------|-------|
+| **Input SNR** | -3 dB (heavily mixed) |
+| **Output SNR** | 12 dB |
+| **Source Correlation** | 0.85 ± 0.03 |
+| **Convergence Time** | < 1 second |
+
 
 **Visualization**:
 
@@ -287,93 +286,107 @@ frequencies. By measuring filter output energy, the corresponding keypad
 digits are identified.
 
 ### Music Classification Results
-+-------------------+----------+----------------+
-| Method            | Accuracy | Avg Query Time |
-+-------------------+----------+----------------+
-| Cosine Similarity | 92%      | 0.23 s         |
-| L2 Norm           | 88%      | 0.21 s         |
-| L1 Norm           | 85%      | 0.19 s         |
-+-------------------+----------+----------------+
 
-Test Set: 20 songs, 5-second samples each
+| Method             | Accuracy | Avg Query Time |
+|--------------------|----------|----------------|
+| Cosine Similarity  | 92%      | 0.23 s         |
+| L2 Norm            | 88%      | 0.21 s         |
+| L1 Norm            | 85%      | 0.19 s         |
+
+**Test Set:** 20 songs, 5-second samples each
+
+
 
 ### Filter Performance
-+--------------+-------------------+------------------------+----------+
-| Filter Type  | Passband Ripple   | Stopband Attenuation   | Latency  |
-+--------------+-------------------+------------------------+----------+
-| FIR (101 taps)| < 0.1 dB          | > 60 dB                | 50 samp  |
-| IIR Notch    | < 0.05 dB          | > 40 dB                | 2 samp   |
-| Shelving     | ±3 dB              | N/A                    | 1 samp   |
-+--------------+-------------------+------------------------+----------+
+
+| Filter Type     | Passband Ripple | Stopband Attenuation | Latency |
+|-----------------|------------------|----------------------|---------|
+| FIR (101 taps)  | < 0.1 dB         | > 60 dB              | 50 samp |
+| IIR Notch       | < 0.05 dB        | > 40 dB              | 2 samp  |
+| Shelving        | ±3 dB            | N/A                  | 1 samp  |
 
 
-### Analysis of algorithms
 
-+---------------+-----------------------+-------------------+
-| Algorithm     | Time Complexity       | Space Complexity  |
-+---------------+-----------------------+-------------------+
-| ICA           | O(n^3) per iteration  | O(n^2)            |
-| FIR Convolution| O(nm)                | O(n + m)          |
-| FFT           | O(n log n)            | O(n)              |
-| Spectrogram   | O(k n log n)          | O(k n)            |
-+---------------+-----------------------+-------------------+
+### Analysis of Algorithms
 
-where n = signal length, m = filter length, k = number of windows
-
-ICA Performance:
-
-Works best when sources are statistically independent
-Fails when sources are Gaussian (ambiguity in separation)
-Optimal for speech + music mixtures
+| Algorithm         | Time Complexity        | Space Complexity |
+|-------------------|------------------------|------------------|
+| ICA               | O(n³) per iteration    | O(n²)            |
+| FIR Convolution   | O(nm)                  | O(n + m)         |
+| FFT               | O(n log n)             | O(n)             |
+| Spectrogram       | O(k n log n)           | O(k n)           |
 
 
-Filter Trade-offs:
-
-FIR: Linear phase, stable, but high latency
-IIR: Low latency, unstable if poles outside unit circle
-FFT: Best for static noise, poor for time-varying signals
+*where n = signal length, m = filter length, k = number of windows*
 
 
-Windowing Effects:
+## ICA Performance
 
-Hamming window: -43 dB sidelobes
-Hanning window: -31 dB sidelobes (better time resolution)
-Trade-off between frequency resolution and time resolution
+- **Best case:** Works best when sources are *statistically independent*.
+- **Failure mode:** Fails when sources are **Gaussian**, leading to ambiguity in separation.
+- **Typical use:** Optimal for **speech + music** mixtures.
 
-### Books
+---
 
-Oppenheim, A. V., & Schafer, R. W. (2009). Discrete-Time Signal Processing (3rd ed.).
-Smith, J. O. (2007). Introduction to Digital Filters with Audio Applications.
+## Filter Trade-offs
+
+| Filter | Advantages | Limitations |
+|--------|------------|-------------|
+| **FIR** | Linear phase, inherently stable | High latency, large filter order |
+| **IIR** | Low latency, computationally efficient | Unstable if poles lie outside the unit circle |
+| **FFT-based** | Efficient for long, static signals | Poor for time-varying signals due to windowing |
+
+---
+
+## Windowing Effects
+
+- **Fundamental trade-off:** Frequency resolution vs. time resolution.
+- **Window characteristics:**
+  - **Hamming window:** ≈ −43 dB sidelobes (strong sidelobe suppression)
+  - **Hanning window:** ≈ −31 dB sidelobes (better time resolution)
+
+---
+
+## References
+
+- Oppenheim, A. V., & Schafer, R. W. (2009). *Discrete-Time Signal Processing* (3rd ed.).
+- Smith, J. O. (2007). *Introduction to Digital Filters with Audio Applications*.
 
 
-## 📁 Repository Structure
 
+## Project Structure
+
+```text
 audio-dsp-toolkit/
 ├── src/
-│ ├── source_separation/
-│ │ └── SourceSeparation.py # ICA-based blind source separation
-│ │
-│ ├── classification/
-│ │ └── MusicClass.py # Spectral fingerprinting classifier
-│ │
-│ ├── filters/
-│ │ ├── FIRnoiseRemoval.py # FIR low-pass filter
-│ │ ├── FFTnoiseRemoval.py # FFT-based noise removal
-│ │ ├── ShelvingFilter.py # IIR shelving filter
-│ │ └── NotchFilter.py # IIR notch filter
-│ │
-│ ├── communications/
-│ │ └── DTMFPhone.py # DTMF tone decoding
-│ │
-│ └── synthesis/
-│ └── Music_generation.py # Basic music synthesis
+│   ├── classification/
+│   │   └── MusicClass.py                 # Spectrogram-based audio classification using similarity metrics
+│   │
+│   ├── communications/
+│   │   └── DTMFPhone.py                  # DTMF tone decoding using bandpass filter banks
+│   │
+│   ├── filters/                          # Audio filtering algorithms
+│   │   ├── FIRnoiseRemoval.py            # FIR low-pass filter design with windowing for noise removal
+│   │   ├── FFTnoiseRemoval.py            # Frequency-domain noise removal using FFT and IFFT
+│   │   ├── ShelvingFilter.py             # IIR shelving filter for low-frequency gain control
+│   │   └── NotchFilter.py                # Second-order IIR notch filter for removing narrowband interference
+│   │
+│   ├── source_separation/
+│   │   └── SourceSeparation.py           # ICA-based blind source separation of mixed audio signals
+│   │
+│   └── synthesis/
+│       └── Music_generation.py           # Basic audio synthesis and signal generation
 │
 ├── data/
-│ └── test_audio/ # Small demo audio files only
+│   └── test_audio/                       # Small demo audio files used for testing and visualization
 │
-├── README.md # Project documentation
-├── requirements.txt # Python dependencies
-└── .gitignore # Git ignore rules
+├── results/
+│   └── plots/                            # Generated figures used in README visualizations
+│
+├── README.md                             # Project documentation and results
+├── requirements.txt                     # Python dependencies
+└── .gitignore                            # Git ignore rules
+
 
 
 
@@ -384,6 +397,11 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ### Contact
 Chinmay Vijay Kumar
 124cs0132@nitrkl.ac.in
+
+
+
+
+
 
 
 
